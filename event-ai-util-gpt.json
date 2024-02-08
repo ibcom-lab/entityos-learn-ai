@@ -1,0 +1,10 @@
+{
+    "settings": "ibcom",
+	"namespaces": ["util.gpt-1.0.0"],
+	"controller": "ai-util-gpt",
+	"messages":
+	{
+		"system": "You are a learning assistant.",
+		"user": "Learning suggestions about governance."
+	}
+}

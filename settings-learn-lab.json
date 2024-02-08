@@ -1,0 +1,29 @@
+{
+	"entityos":
+	{
+		"hostname": "api.entityos.cloud", 
+		"logon": "", 
+		"password": "", 
+		"email": "",
+		"testing": 
+		{
+			"status": "true",
+			"showData": "true",
+			"break": "-"
+		},
+		"convert": "true"
+	},
+	"ai":
+	{
+		"gpt":
+		{
+			"openai":
+			{
+				"key": "sk-....",
+				"name": "entityos-api",
+				"note": "Using openapi key",
+                "model": "gpt-4"
+			}
+		}
+	}
+}	

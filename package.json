@@ -1,0 +1,30 @@
+{
+    "name": "mydigitalstructure-push",
+    "version": "1.0.0",
+    "licence": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/ibcom/mydigitalstructure-push/raw/master/LICENSE"
+        }
+    ],
+    "description": "Push information to users",
+    "preferGlobal": true,
+    "main": "index.js",
+    "bin": {},
+    "author": "Mark Byers",
+    "keywords": [
+        "Push"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ibcom/mydigitalstructure-push.git"
+    },
+    "dependencies": {
+        "lodash": "*",
+        "moment": "^2.19.1",
+        "mydigitalstructure": "^2.1.7"
+    },
+    "engines": {
+        "node": "*"
+    }
+}
