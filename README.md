@@ -6,7 +6,7 @@ In this example the node app (as entityOS user) is looking for conversation (set
 
 Example uses OpenAI, but you can change to any service you wish.
 
-You can also change to Python using https://github.com/ibcom-lab/entityos-learn-python as your starting point.
+You can also change to a Python app - using https://github.com/ibcom-lab/entityos-learn-python as your starting point.
 
 
 
