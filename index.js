@@ -269,7 +269,7 @@ exports.handler = function (event, context, callback)
 
 					event._posts.genai = _.filter(event._posts.all, function (post)
 					{
-						return (_.includes(_.toLower(post.subject), '@genai:'))
+						return (_.includes(_.toLower(post.subject), '@genai:') || _.includes(_.toLower(post.subject), '@heyocto:'))
 					});
 
 					if (event._posts.genai.length == 0)
