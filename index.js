@@ -5,8 +5,20 @@
 	This is node app to automate tasks
 	https://www.npmjs.com/package/lambda-local:
 
-	lambda-local -l index.js -t 9000 -e event-ai-util-gpt.json
-	lambda-local -l index.js -t 9000 -e event-ai-conversation-chat.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-service-models-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-chat-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-chat-google-lab.json
+	
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-mistral-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-groq-mistral-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-claude-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-groq-llama-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-openai-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-google-lab.json
+
+	zip -r ../entityos-ai-DDMMMYYYY.zip *
 */
 
 exports.handler = function (event, context, callback)
@@ -18,6 +30,12 @@ exports.handler = function (event, context, callback)
 	entityos.set(
 	{
 		scope: '_event',
+		value: event
+	});
+
+	entityos.set(
+	{
+		scope: '_data',
 		value: event
 	});
 
@@ -106,24 +124,18 @@ exports.handler = function (event, context, callback)
 			var settings = entityos.get({scope: '_settings'});
 			var event = entityos.get({scope: '_event'});
 
-			entityos._util.message(
-			[
-				'-',
-				'SETTINGS:',
-				settings
-			]);
+			entityos._util.message(settings);
 
-			var namespace = settings.ai.namespace;
+			var namespace = event.namespace;
+			
+			if (namespace == undefined)
+			{
+				namespace = _.get(settings, 'ai.defaults.namespace');
+			}
 
-			if (event.namespace != undefined) {namespace = event.namespace;}
 			if (namespace != undefined)
 			{
-				entityos._util.message(
-				[
-					'-',
-					'NAMESPACE:',
-					namespace
-				]);
+				entityos._util.message('Loading namespace: ' + namespace);
 
 				var aifactory = require('aifactory/aifactory.' + namespace + '.js');
 
@@ -133,23 +145,22 @@ exports.handler = function (event, context, callback)
 				}
 			}
 
-			var namespaces = settings.ai.namespaces;
+			var namespaces = event.namespaces;
+			
+			if (namespaces == undefined)
+			{
+				namespaces = _.get(settings, 'ai.default.namespaces');
+			}
 
-			if (event.namespaces != undefined) {namespaces = event.namespaces;}
 			if (namespaces != undefined)
 			{
-				entityos._util.message(
-				[
-					'-',
-					'NAMESPACES:'
-				]);
-
 				var _namespaces = {};
 				_.each(namespaces, function (namespace)
 				{
-					entityos._util.message([namespace]);
+					entityos._util.message(namespace);
 
 					_namespaces[namespace] = require('aifactory/aifactory.' + namespace + '.js');
+					
 					if (_.has(_namespaces[namespace], 'init'))
 					{
 						_namespaces[namespace].init();
@@ -157,11 +168,28 @@ exports.handler = function (event, context, callback)
 				});
 			}
 
+			const aiSettings = entityos.invoke('ai-gen-util-get-settings');
+
+			console.log(aiSettings)
+
+			const serviceNamespace = _.get(aiSettings, 'service.namespace');
+
+			if (serviceNamespace != undefined)
+			{
+				entityos._util.message('Loading service namespace: ' + serviceNamespace);
+				const servicefactory = require('aifactory/aifactory.' + serviceNamespace + '.js');
+
+				if (_.has(servicefactory, 'init'))
+				{
+					servicefactory.init();
+				}
+			}
+
 			//- GET CONVERSATION
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat',
+				name: 'ai-gen-conversation-chat',
 				code: function (param)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -178,14 +206,14 @@ exports.handler = function (event, context, callback)
 								value: event.conversation.uuid
 							}
 						],
-						callback: 'ai-conversation-chat-response'
+						callback: 'ai-gen-conversation-chat-response'
 					});
 				}
 			});
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-response',
+				name: 'ai-gen-conversation-chat-response',
 				code: function (param, response)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -204,7 +232,7 @@ exports.handler = function (event, context, callback)
 						{
 							event._conversation = _.first(response.data.rows);
 							entityos.set({scope: '_event', value: event});
-							entityos.invoke('ai-conversation-chat-posts', param)
+							entityos.invoke('ai-gen-conversation-chat-posts', param)
 						}
 					}
 				}
@@ -214,7 +242,7 @@ exports.handler = function (event, context, callback)
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-posts',
+				name: 'ai-gen-conversation-chat-posts',
 				code: function (param)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -232,14 +260,14 @@ exports.handler = function (event, context, callback)
 								value: event._conversation.id
 							}
 						],
-						callback: 'ai-conversation-chat-posts-response'
+						callback: 'ai-gen-conversation-chat-posts-response'
 					});
 				}
 			});
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-posts-response',
+				name: 'ai-gen-conversation-chat-posts-response',
 				code: function (param, response)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -252,8 +280,7 @@ exports.handler = function (event, context, callback)
 					{	
 						event._posts = {all: response.data.rows};
 						entityos.set({scope: '_event', value: event});
-						//entityos.invoke('util-end', event)
-						entityos.invoke('ai-conversation-chat-posts-process', param)	
+						entityos.invoke('ai-gen-conversation-chat-posts-process', param);
 					}
 				}
 			});
@@ -262,32 +289,32 @@ exports.handler = function (event, context, callback)
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-posts-process',
+				name: 'ai-gen-conversation-chat-posts-process',
 				code: function (param)
 				{
 					var event = entityos.get({scope: '_event'});
 
 					event._posts.genai = _.filter(event._posts.all, function (post)
 					{
-						return (_.includes(_.toLower(post.subject), '@genai:') || _.includes(_.toLower(post.subject), '@heyocto:'))
+						return (_.includes(_.toLower(post.subject), '@genai:'))
 					});
 
 					if (event._posts.genai.length == 0)
 					{
-						entityos.invoke('ai-conversation-chat-complete');
+						entityos.invoke('ai-gen-conversation-chat-complete');
 					}
 					else
 					{
 						event._posts._indexGenAIProcessing = 0;
 						entityos.set({scope: '_event', value: event});
-						entityos.invoke('ai-conversation-chat-posts-process-genai');
+						entityos.invoke('ai-gen-conversation-chat-posts-process-genai');
 					}
 				}
 			});
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-posts-process-genai',
+				name: 'ai-gen-conversation-chat-posts-process-genai',
 				code: function (param)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -306,21 +333,21 @@ exports.handler = function (event, context, callback)
 								system: 'You are a learning assistant for a young person',
 								user: userMessage
 							},
-							onComplete: 'ai-conversation-chat-posts-process-genai-save'
+							onComplete: 'ai-gen-conversation-chat-posts-process-genai-save'
 						}
 
 						entityos.invoke('ai-util-gpt', param);
 					}
 					else
 					{
-						entityos.invoke('ai-conversation-chat-complete');
+						entityos.invoke('ai-gen-conversation-chat-complete');
 					}
 				}
 			});
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-posts-process-genai-save',
+				name: 'ai-gen-conversation-chat-posts-process-genai-save',
 				code: function (param, response)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -334,7 +361,7 @@ exports.handler = function (event, context, callback)
 						{	
 							conversation: event._conversation.id,
 							post: post.id,
-							subject: _.replace(post.subject, '@genai:', '@genai:response:'),
+							subject: _.replace(post.subject, '@genai:', '@genai:response:') + ':' + event._model,
 							message: _.truncate(post.gptMessage, {length: 8000})
 						}
 				
@@ -344,21 +371,21 @@ exports.handler = function (event, context, callback)
 						{
 							object: 'messaging_conversation_post_comment',
 							data: saveData,
-							callback: 'ai-conversation-chat-posts-process-genai-save',
+							callback: 'ai-gen-conversation-chat-posts-process-genai-save',
 							callbackParam: param
 						});
 					}
 					else
 					{
 						post._messagingConversation = {id: response.id};
-						entityos.invoke('ai-conversation-chat-posts-process-genai-next', param);
+						entityos.invoke('ai-gen-conversation-chat-posts-process-genai-next', param);
 					}
 				}
 			});
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-posts-process-genai-next',
+				name: 'ai-gen-conversation-chat-posts-process-genai-next',
 				code: function (param)
 				{
 					var event = entityos.get({scope: '_event'});
@@ -368,13 +395,13 @@ exports.handler = function (event, context, callback)
 					event._posts._indexGenAIProcessing = (event._posts._indexGenAIProcessing + 1)
 					entityos.set({scope: '_event', value: event});
 
-					entityos.invoke('ai-conversation-chat-posts-process-genai');
+					entityos.invoke('ai-gen-conversation-chat-posts-process-genai');
 				}
 			});
 
 			entityos.add(
 			{
-				name: 'ai-conversation-chat-complete',
+				name: 'ai-gen-conversation-chat-complete',
 				code: function (param)
 				{
 					var event = entityos.get({scope: '_event'});

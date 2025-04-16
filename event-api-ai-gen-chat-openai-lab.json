@@ -1,0 +1,16 @@
+{
+	"body": {
+		"method": "ai-gen-chat",
+		"data": {
+			"_context": "lab",
+			"service": "openai",
+			"messages": {
+				"system": "You are a learning assistant.",
+				"user": "Learning suggestions about governance."
+			}
+		},
+		"check": "false"
+	},
+	"queryStringParameters": {},
+	"headers": {}
+}

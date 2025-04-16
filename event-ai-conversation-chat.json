@@ -1,9 +1,0 @@
-{
-    "settings": "selfdriven-lab",
-	"namespaces": ["util.gpt-1.0.0"],
-	"controller": "ai-conversation-chat",
-	"conversation":
-	{
-		"uuid": "1c05d719-3d43-44c1-b633-b3342eb77b33"
-	}
-}

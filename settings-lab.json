@@ -1,0 +1,196 @@
+{
+	"entityos": {
+		"hostname": "api.entityos.cloud",
+		"logon": "",
+		"password": "",
+		"email": "",
+		"testing": {
+			"status": "true",
+			"showData": "true",
+			"break": "-"
+		},
+		"convert": "true"
+	},
+	"ai": {
+		"services": [
+			{
+				"name": "openai",
+				"note": "Using OpenAI SDK",
+				"models": [
+					{
+						"name": "gpt-4.1-mini",
+						"default": true
+					},
+					{
+						"name": "gpt-4o-mini"
+					},
+					{
+						"name": "gpt-4o"
+					}
+				],
+				"namespace": "ai.gen.util.openai-1.0.1",
+				"keypath": "ai.keys.openai",
+				"default": true
+			},
+			{
+				"name": "xai",
+				"note": "Using OpenAI SDK",
+				"models": [
+					{
+						"name": "grok-3-mini-beta",
+						"default": true
+					},
+					{
+						"name": "grok-3-beta"
+					}
+				],
+				"namespace": "ai.gen.util.xai-1.0.0",
+				"keypath": "ai.keys.xai",
+				"host":
+				{
+					"name": "api.x.ai",
+					"basePath": "/v1",
+					"path": "/v1/chat/completions"
+				}
+			},
+			{
+				"name": "google",
+				"note": "Using AI Studio key & Google SDK",
+				"models": [
+					{
+						"name": "gemini-2.0-flash",
+						"default": true
+					},
+					{
+						"name": "gemini-pro-vision"
+					}
+				],
+				"namespace": "ai.gen.util.google-1.0.0",
+				"keypath": "ai.keys.google"
+			},
+			{
+				"name": "mistral",
+				"note": "Using selfdriven-lab Mistral key",
+				"models": [
+					{
+						"name": "open-mistral-7b",
+						"default": true
+					}
+				],
+				"namespace": "ai.gen.util.mistral-1.0.0",
+				"host":
+				{
+					"name": "api.mistral.ai",
+					"path": "/v1/chat/completions"
+				},
+				"keypath": "ai.keys.mistral"
+			},
+			{
+				"name":"groq",
+				"note": "Using Groq Cloud key",
+				"models": [
+					{
+						"name": "mixtral-8x7b-32768",
+						"default": true
+					},
+					{
+						"name": "llama3-70b-8192"
+					}
+				],
+				"namespaces": [],
+				"host":
+				{
+					"name": "api.groq.com",
+					"path": "/openai/v1/chat/completions"
+				},
+				"keypath": "ai.keys.groq"
+			},
+			{
+				"name": "claude",
+				"note": "Using Claude Cloud key",
+				"models": [
+					{
+						"name": "claude-3-5-sonnet-20240620",
+						"default": true
+					}
+				],
+				"namespaces": [],
+				"host":
+				{
+					"name": "api.anthropic.com",
+					"path": "/v1/messages"
+				},
+				"headers":
+				{
+					"anthropic-version": "2023-06-01"
+				},
+				"keypath": "ai.keys.claude",
+				"defaults": {"maxtokens": 1024}
+			}
+		],
+		"usage": {
+			"rules": [
+				{
+					"type": "per-chat",
+					"token": "octoproto",
+					"cost": "1",
+					"note": "Introductory offer"
+				},
+				{
+					"type": "unlimited",
+					"token": "sdf",
+					"have": "1000",
+					"note": "Introductory offer"
+				},
+				{
+					"type": "unlimited",
+					"token": "sdi",
+					"have": "1",
+					"note": "Introductory offer"
+				}
+			]
+		},
+		"defaults":
+		{
+			"namespace": "ai.gen.util-1.0.0",
+			"maxtokens": 1000,
+			"temperature": 0.7,
+			"messages":
+			{
+				"system": "You are ...."
+			}
+		}
+	},
+	"rules": [
+		{
+			"set": "ai.keys.openai",
+			"env": "",
+			"default": ""
+		},
+		{
+			"set": "ai.keys.xai",
+			"env": "",
+			"default": ""
+		},
+		{
+			"set": "ai.keys.google",
+			"env": "",
+			"default": ""
+		},
+		{
+			"set": "ai.keys.mistral",
+			"env": "",
+			"default": ""
+		},
+		{
+			"set": "ai.keys.groq",
+			"env": "",
+			"default": ""
+		},
+		{
+			"set": "ai.keys.claude",
+			"env": "",
+			"default": ""
+		}
+	]
+}

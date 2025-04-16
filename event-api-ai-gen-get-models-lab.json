@@ -1,0 +1,11 @@
+{
+	"body": {
+		"method": "ai-gen-get-models",
+		"data": {
+			"_context": "lab"
+		},
+		"check": "false"
+	},
+	"queryStringParameters": {},
+	"headers": {}
+}

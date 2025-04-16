@@ -1,0 +1,13 @@
+{
+    "settings": "lab",
+	"controller": "ai-gen-conversation-chat",
+	"conversation":
+	{
+		"uuid": "1c05d719-3d43-44c1-b633-b3342eb77b33"
+	},
+	"notes":
+	[
+		"Uses settings defaults ie OpenAI.gpt-4o-mini and messages.system.",
+		"Processed entityOS conversation based on the uuid."
+	]
+}

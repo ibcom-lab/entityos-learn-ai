@@ -1,0 +1,6 @@
+{
+    "settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-service-models",
+	"notes": ["For testing service api calls."]
+}
