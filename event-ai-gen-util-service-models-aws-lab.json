@@ -1,0 +1,6 @@
+{
+    "settings": "lab",
+	"service": "aws",
+	"controller": "ai-gen-util-service-models",
+	"notes": ["Get models from the service."]
+}

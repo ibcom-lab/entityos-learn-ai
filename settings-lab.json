@@ -126,6 +126,23 @@
 				},
 				"keypath": "ai.keys.claude",
 				"defaults": {"maxtokens": 1024}
+			},
+			{
+				"name":"aws",
+				"note": "Using AWS Access key top access Bedrock - make sure set up service to allow access to models using AWS Console.",
+				"models": [
+					{
+						"name": "amazon.titan-text-lite-v1",
+						"default": true
+					}
+				],
+				"namespace": "ai.gen.util.aws-1.0.0",
+				"_host":
+				{
+					"name": "api.groq.com",
+					"path": "/openai/v1/chat/completions"
+				},
+				"keypath": "ai.keys.aws"
 			}
 		],
 		"usage": {
@@ -161,6 +178,17 @@
 			}
 		}
 	},
+	"infrastructure":
+	{
+		"aws":
+		{
+			"access":
+			{
+				"id": "",
+				"secret": ""
+			}
+		}
+	},
 	"rules": [
 		{
 			"set": "ai.keys.openai",
@@ -191,6 +219,17 @@
 			"set": "ai.keys.claude",
 			"env": "",
 			"default": ""
+		},
+		{
+			"env": "AWS_ACCESS_KEY_ID",
+			"set": "infrastructure.aws.access.id",
+			"default": "AKIA..."
+		},
+		{
+			"env": "AWS_SECRET_ACCESS_KEY",
+			"set": "infrastructure.aws.access.secret",
+			"_default": "prompt",
+			"default": "..."
 		}
 	]
 }

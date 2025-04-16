@@ -6,6 +6,7 @@
 	https://www.npmjs.com/package/lambda-local:
 
 	lambda-local -l index.js -t 9000 -e event-ai-gen-util-service-models-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-service-models-aws-lab.json
 
 	lambda-local -l index.js -t 9000 -e event-ai-gen-util-chat-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-util-chat-google-lab.json
@@ -280,7 +281,15 @@ exports.handler = function (event, context, callback)
 					{	
 						event._posts = {all: response.data.rows};
 						entityos.set({scope: '_event', value: event});
+						//entityos.invoke('util-end', event)
 						entityos.invoke('ai-gen-conversation-chat-posts-process', param);
+
+						//!!!! GET THE ATTRIBUTES OF THE USER THAT POSTED AND USE FOR systemMessage
+							// About me = URI: 00010000230000 (Understanding of Self)
+							// Believes About Yourself = URI: 00010000250000 (Believe in Self)
+							// Learning Communication Style = URI: 00010000040000 (Communication)
+							// Can also include attributes with percentages if they have been set - look at the latest action.
+							// skillzeb.io
 					}
 				}
 			});
@@ -296,7 +305,7 @@ exports.handler = function (event, context, callback)
 
 					event._posts.genai = _.filter(event._posts.all, function (post)
 					{
-						return (_.includes(_.toLower(post.subject), '@genai:'))
+						return (_.includes(_.toLower(post.subject), '@genai:') || _.includes(_.toLower(post.subject), '@heyocto:'))
 					});
 
 					if (event._posts.genai.length == 0)
@@ -323,20 +332,45 @@ exports.handler = function (event, context, callback)
 					{
 						var post = event._posts.genai[event._posts._indexGenAIProcessing];
 
-						var userMessage = _.unescape(post.message);
-						console.log(userMessage);
+						let aiSettings = entityos.invoke('ai-gen-util-get-settings');
 
-						var param = 
+						if (aiSettings == undefined)
 						{
-							messages:
+							entityos.invoke('util-end', 
 							{
-								system: 'You are a learning assistant for a young person',
-								user: userMessage
+								error: 'Not a valid model name. Use ai-gen-get-models method for find valid models.'
 							},
-							onComplete: 'ai-gen-conversation-chat-posts-process-genai-save'
+							'403');
 						}
+						else
+						{
+							const userMessage = _.unescape(post.message);
+							const messageSystemsDefault = _.get(data, 'ai.defaults.messages.system', 'You are a learning assistant for a young person');
 
-						entityos.invoke('ai-util-gpt', param);
+							var param = 
+							{
+								model: data.model,
+								settings: aiSettings,
+								maxTokens: _.get(data, 'maxtokens'),
+								temperature: _.get(data, 'temperature'),
+								messages:
+								{
+									system: messageSystemsDefault,
+									user: userMessage
+								},
+								onComplete: 'ai-gen-conversation-chat-posts-process-genai-save'
+							}
+
+							let modelSettings = _.get(data, 'modelSettings');
+							
+							if (modelSettings != undefined)
+							{
+								// !!TODO: Santize settings - make util- function
+								_.set(param, 'modelSettings', modelSettings)
+							}
+
+							entityos.invoke('ai-gen-util-chat', param);
+						}
 					}
 					else
 					{

@@ -63,6 +63,7 @@
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-get-models-lab.json
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-openai-lab.json
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-claude-lab.json
+	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-aws-lab.json
 	
 	Upload to AWS Lambda:
 	zip -r ../entityos-ai-DDMMMYYYY.zip *
@@ -219,8 +220,6 @@ exports.handler = function (event, context, callback)
 						scope: '_request',
 						value: request
 					});
-
-					//ai-gen-chat change to requiring on-chain auth into own account
 
 					if (request.body.apikey != undefined)
 					{
@@ -713,12 +712,7 @@ exports.handler = function (event, context, callback)
 				name: 'app-process-ai-gen-get-models',
 				code: function ()
 				{
-					var request = entityos.get(
-					{
-						scope: '_request'
-					});
-
-					var data = request.body.data;
+					var data = entityos.get({scope: '_data'});
 
 					if (data == undefined)
 					{
@@ -795,12 +789,7 @@ exports.handler = function (event, context, callback)
 				name: 'app-process-ai-gen-chat',
 				code: function ()
 				{
-					var request = entityos.get(
-					{
-						scope: '_request'
-					});
-
-					var data = request.body.data;
+					var data = entityos.get({scope: '_data'});
 
 					if (data == undefined)
 					{
@@ -839,6 +828,14 @@ exports.handler = function (event, context, callback)
 									user: userMessage
 								},
 								onComplete: 'app-process-ai-gen-chat-response'
+							}
+
+							let modelSettings = _.get(data, 'modelSettings');
+							
+							if (modelSettings != undefined)
+							{
+								// !!TODO: Santize settings - make util- function
+								_.set(param, 'modelSettings', modelSettings)
 							}
 
 							let controller = 'ai-gen-util-chat';
