@@ -1,0 +1,5 @@
+{
+    "settings": "lab",
+	"filename": "image.png",
+	"controller": "ai-gen-util-file-to-base64"
+}

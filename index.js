@@ -7,9 +7,11 @@
 
 	lambda-local -l index.js -t 9000 -e event-ai-gen-util-service-models-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-util-service-models-aws-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-file-to-base64-lab.json
 
-	lambda-local -l index.js -t 9000 -e event-ai-gen-util-chat-lab.json
-	lambda-local -l index.js -t 9000 -e event-ai-gen-util-chat-google-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-google-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-with-attachment-lab.json
 	
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-mistral-lab.json
@@ -20,6 +22,9 @@
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-google-lab.json
 
 	zip -r ../entityos-ai-DDMMMYYYY.zip *
+
+	//TODO: Use conversation description to hold "System" message
+	// Upload base64 image
 */
 
 exports.handler = function (event, context, callback)
@@ -186,7 +191,87 @@ exports.handler = function (event, context, callback)
 				}
 			}
 
-			//- GET CONVERSATION
+			//- GEN CHAT
+
+			entityos.add(
+			{
+				name: 'ai-gen-chat',
+				code: function ()
+				{
+					var event = entityos.get({scope: '_event'});
+					var settings = entityos.get({scope: '_settings'});
+
+					let aiSettings = entityos.invoke('ai-gen-util-get-settings');
+
+					if (aiSettings == undefined)
+					{
+						entityos.invoke('util-end', 
+						{
+							error: 'Not a valid model name. Use ai-gen-util-get-models method for find valid models.'
+						});
+					}
+					else
+					{
+						let userMessage = _.unescape(_.get(event, 'messages.user'));
+						const systemMessageDefault = _.get(settings, 'ai.defaults.messages.system');
+						let systemMessage = _.unescape(_.get(event, 'messages.system', systemMessageDefault));
+
+						var param = 
+						{
+							model: event.model,
+							settings: aiSettings,
+							maxTokens: _.get(event, 'maxtokens'),
+							temperature: _.get(event, 'temperature'),
+							messages:
+							{
+								system: systemMessage,
+								user: userMessage
+							},
+							attachments: _.get(event, 'attachments'),
+							onComplete: 'ai-gen-chat-response'
+						}
+
+						let modelSettings = _.get(event, 'modelSettings');
+						
+						if (modelSettings != undefined)
+						{
+							// !!TODO: Santize settings - make util- function
+							_.set(param, 'modelSettings', modelSettings)
+						}
+
+						let controller = 'ai-gen-util-chat';
+
+						if (_.has(aiSettings, 'service.controller'))
+						{
+							controller = aiSettings.service.controller;
+						}
+
+						entityos.invoke(controller, param);
+					}
+				
+				}
+			});
+
+			entityos.add(
+			{
+				name: 'ai-gen-chat-response',
+				code: function (param, response)
+				{
+					console.log(response);
+					var responseData =
+					{
+						"messages": {"response": param.messages.response}
+					}
+
+					entityos.invoke('util-end',
+					{
+						method: 'ai-gen-chat',
+						data: responseData
+					});
+				}
+			});
+
+			//- GEN ENTITYOS CONVERSATION CHAT
 
 			entityos.add(
 			{

@@ -1,0 +1,11 @@
+{
+    "settings": "lab",
+	"service": "google",
+	"controller": "ai-gen-chat",
+	"messages":
+	{
+		"system": "You are a learning assistant.",
+		"user": "Learning suggestions about governance."
+	},
+	"notes": ["For testing service api calls."]
+}
