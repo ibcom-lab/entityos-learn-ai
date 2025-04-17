@@ -1,12 +1,11 @@
 {
     "settings": "lab",
-	"service": "openai",
+	"service": "xai",
 	"controller": "ai-gen-chat",
 	"messages":
 	{
 		"system": "You are a learning assistant.",
-		"_user": "Learning suggestions about governance.",
-		"user": "Hello"
+		"user": "Learning suggestions about governance."
 	},
 	"notes": ["For testing service api calls."]
 }

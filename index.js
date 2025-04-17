@@ -12,6 +12,9 @@
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-google-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-with-attachment-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-xai-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-xai-with-attachment-lab.json
 	
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-mistral-lab.json
@@ -255,11 +258,13 @@ exports.handler = function (event, context, callback)
 			entityos.add(
 			{
 				name: 'ai-gen-chat-response',
-				code: function (param, response)
+				code: function (param)
 				{
-					console.log(response);
+					console.log(param)
 					var responseData =
 					{
+						"service": {"name": _.get(param, 'settings.service.name')},
+						"model": _.get(param, 'settings.model'),
 						"messages": {"response": param.messages.response}
 					}
 

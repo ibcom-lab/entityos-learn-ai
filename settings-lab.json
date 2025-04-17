@@ -42,6 +42,9 @@
 					},
 					{
 						"name": "grok-3-beta"
+					},
+					{
+						"name": "grok-2-vision-1212"
 					}
 				],
 				"namespace": "ai.gen.util.xai-1.0.0",
