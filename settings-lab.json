@@ -113,9 +113,15 @@
 				"note": "Using Claude Cloud key",
 				"models": [
 					{
-						"name": "claude-3-5-sonnet-20240620",
+						"name": "claude-3-7-sonnet-20250219",
 						"default": true
-					}
+					},
+					{
+						"name": "claude-3-haiku-20240307"
+					},					
+					{
+						"name": "claude-sonnet-4-20250514"
+					}	
 				],
 				"namespaces": [],
 				"host":
