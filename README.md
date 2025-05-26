@@ -15,11 +15,6 @@ You can also change to a Python app - using [github.com/ibcom-lab/entityos-learn
 - [selfdriven.ai](https://selfdriven.ai)
 - [heyocto.ai](https://heyocto.ai)
 
-### References
-- [platform.openai.com](https://platform.openai.com)
-- [Upload & search files](https://cookbook.openai.com/examples/file_search_responses)
-- [github.com/openai/openai-cookbook)](https://github.com/openai/openai-cookbook)
-
 ---
 [entityOS.ai](https://entityos.ai)
 
