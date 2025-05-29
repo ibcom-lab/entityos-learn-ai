@@ -1,0 +1,9 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-vector-store-create",
+	"notes": [
+		"create a vector store of loading file."
+	],
+	"vectorstore": {"name": "vs-lab-01", "description": "VS lab 01"}
+}

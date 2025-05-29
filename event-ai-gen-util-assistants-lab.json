@@ -1,0 +1,8 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-assistants",
+	"notes": [
+		"get assistants."
+	]
+}

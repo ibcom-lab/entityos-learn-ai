@@ -64,6 +64,8 @@
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-openai-lab.json
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-claude-lab.json
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-aws-lab.json
+
+	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-openai-all-lab.json
 	
 	Upload to AWS Lambda:
 	zip -r ../entityos-ai-DDMMMYYYY.zip *
@@ -790,6 +792,7 @@ exports.handler = function (event, context, callback)
 				code: function ()
 				{
 					var data = entityos.get({scope: '_data'});
+					var settings = entityos.get({scope: '_settings'});
 
 					if (data == undefined)
 					{
@@ -813,8 +816,25 @@ exports.handler = function (event, context, callback)
 						}
 						else
 						{
-							var userMessage = _.unescape(_.get(data, 'messages.user'));
-							const messageSystemsDefault = _.get(data, 'ai.defaults.messages.system', 'You are a learning assistant for a young person');
+							let allMessages = _.get(data, 'messages.all', []);
+							let chatMessages;
+
+							if (allMessages.length == 0)
+							{
+								var userMessage = _.unescape(_.get(data, 'messages.user'));
+
+								const systemMessageDefault = _.get(settings, 'ai.defaults.messages.system', 'You are a caring learning assistant.');
+								const systemMessage = _.unescape(_.get(data, 'ai.defaults.messages.system', systemMessageDefault));
+
+								chatMessages = {
+									system: systemMessage,
+									user: userMessage
+								}
+							}
+							else
+							{
+								chatMessages = {all: allMessages}
+							}
 
 							var param = 
 							{
@@ -822,11 +842,7 @@ exports.handler = function (event, context, callback)
 								settings: aiSettings,
 								maxTokens: _.get(data, 'maxtokens'),
 								temperature: _.get(data, 'temperature'),
-								messages:
-								{
-									system: messageSystemsDefault,
-									user: userMessage
-								},
+								messages: chatMessages,
 								onComplete: 'app-process-ai-gen-chat-response'
 							}
 

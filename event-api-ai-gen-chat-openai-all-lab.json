@@ -1,0 +1,32 @@
+{
+	"body": {
+		"method": "ai-gen-chat",
+		"data": {
+			"_context": "lab",
+			"service": "openai",
+			"messages": {
+				"all": [
+					{
+						"role": "system",
+						"content": "You are a helpful assistant."
+					},
+					{
+						"role": "user",
+						"content": "What's the capital of France?"
+					},
+					{
+						"role": "assistant",
+						"content": "The capital of France is Paris."
+					},
+					{
+						"role": "user",
+						"content": "What's the population?"
+					}
+				]
+			}
+		},
+		"check": "false"
+	},
+	"queryStringParameters": {},
+	"headers": {}
+}

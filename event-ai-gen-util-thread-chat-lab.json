@@ -1,0 +1,21 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-thread-chat",
+	"notes": [
+		"chat using thread - with pre-linked assistant - with pre-linked vector-store."
+	],
+	"thread":
+	{
+		"id": "thread_QFmkWUZadLOM4qgHwVMLCC3x"
+	},
+	"assistant":
+	{
+		"id": "asst_L86cr1HWWNOYLdk5T7ymp5TG"
+	},
+	"message":
+	{
+		"role": "user",
+		"content": "what encryption does ZOLL AED use"
+	}
+}

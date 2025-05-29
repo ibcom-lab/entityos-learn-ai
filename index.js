@@ -10,8 +10,11 @@
 	lambda-local -l index.js -t 9000 -e event-ai-gen-util-file-to-base64-lab.json
 
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-lab.json
-	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-google-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-with-attachment-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-all-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-google-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-google-with-attachment-lab.json
 
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-xai-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-chat-xai-with-attachment-lab.json
@@ -23,6 +26,20 @@
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-groq-llama-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-openai-lab.json
 	lambda-local -l index.js -t 9000 -e event-ai-gen-conversation-chat-google-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-vector-store-create-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-vector-stores-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-vector-store-attach-file-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-file-upload-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-file-base64-upload-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-files-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-assistant-create-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-assistants-lab.json
+
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-thread-create-lab.json
+	lambda-local -l index.js -t 9000 -e event-ai-gen-util-thread-chat-lab.json
 
 	zip -r ../entityos-ai-DDMMMYYYY.zip *
 
@@ -90,8 +107,6 @@ exports.handler = function (event, context, callback)
 	
 	function main(init)
 	{
-		console.log(init);
-
 		entityos.add(
 		{
 			name: 'util-log',
@@ -133,7 +148,7 @@ exports.handler = function (event, context, callback)
 			var settings = entityos.get({scope: '_settings'});
 			var event = entityos.get({scope: '_event'});
 
-			entityos._util.message(settings);
+			//entityos._util.message(settings);
 
 			var namespace = event.namespace;
 			
@@ -179,7 +194,7 @@ exports.handler = function (event, context, callback)
 
 			const aiSettings = entityos.invoke('ai-gen-util-get-settings');
 
-			console.log(aiSettings)
+			//console.log(aiSettings)
 
 			const serviceNamespace = _.get(aiSettings, 'service.namespace');
 
@@ -215,9 +230,24 @@ exports.handler = function (event, context, callback)
 					}
 					else
 					{
-						let userMessage = _.unescape(_.get(event, 'messages.user'));
-						const systemMessageDefault = _.get(settings, 'ai.defaults.messages.system');
-						let systemMessage = _.unescape(_.get(event, 'messages.system', systemMessageDefault));
+						let allMessages = _.get(event, 'messages.all', []);
+						let chatMessages;
+
+						if (allMessages.length == 0)
+						{
+							let userMessage = _.unescape(_.get(event, 'messages.user'));
+							const systemMessageDefault = _.get(settings, 'ai.defaults.messages.system');
+							let systemMessage = _.unescape(_.get(event, 'messages.system', systemMessageDefault));
+
+							chatMessages = {
+								system: systemMessage,
+								user: userMessage
+							}
+						}
+						else
+						{
+							chatMessages = {all: allMessages}
+						}
 
 						var param = 
 						{
@@ -225,11 +255,7 @@ exports.handler = function (event, context, callback)
 							settings: aiSettings,
 							maxTokens: _.get(event, 'maxtokens'),
 							temperature: _.get(event, 'temperature'),
-							messages:
-							{
-								system: systemMessage,
-								user: userMessage
-							},
+							messages: chatMessages,
 							attachments: _.get(event, 'attachments'),
 							onComplete: 'ai-gen-chat-response'
 						}
@@ -260,7 +286,7 @@ exports.handler = function (event, context, callback)
 				name: 'ai-gen-chat-response',
 				code: function (param)
 				{
-					console.log(param)
+					//console.log(param)
 					var responseData =
 					{
 						"service": {"name": _.get(param, 'settings.service.name')},
@@ -489,7 +515,7 @@ exports.handler = function (event, context, callback)
 							message: _.truncate(post.gptMessage, {length: 8000})
 						}
 				
-						console.log(saveData);
+						//console.log(saveData);
 
 						entityos.cloud.save(
 						{

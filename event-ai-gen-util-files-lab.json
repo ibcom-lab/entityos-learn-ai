@@ -1,0 +1,11 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-files",
+	"notes": [
+		"get files."
+	],
+	"vectorstore": {
+		"id": "vs_6837afbb53a481919132e28e80ee6eff"
+	}
+}
