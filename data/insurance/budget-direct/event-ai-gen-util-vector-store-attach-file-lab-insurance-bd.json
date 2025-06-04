@@ -1,0 +1,14 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-vector-store-attach-file",
+	"notes": [
+		"attach uploaded file to vector store."
+	],
+	"vectorstore": {
+		"id": "vs_683f89d172a48191854a19c2af680c2c"
+	},
+	"file": {
+		"id": "file-1cYcBZQsJngFjQqvhRXSQF"
+	}
+}

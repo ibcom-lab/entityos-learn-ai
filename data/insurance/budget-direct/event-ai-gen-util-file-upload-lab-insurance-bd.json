@@ -1,0 +1,12 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-file-upload",
+	"notes": [
+		"upload file to service."
+	],
+	"file": {
+		"name": "insurance-bd-FSG.pdf",
+		"path": "data/insurance/budget-direct"
+	}
+}

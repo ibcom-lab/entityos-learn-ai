@@ -1,0 +1,16 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-assistant-create",
+	"notes": [
+		"create an assistant linked to a vector-store."
+	],
+	"vectorstore": {
+		"id": "vs_683f89d172a48191854a19c2af680c2c"
+	},
+	"assistant":
+	{
+		"name": "lab-insurance-bd-assistant",
+		"instructions": "You are insurer assistant helping insured understand their policies, including what they can claim for."
+	}
+}

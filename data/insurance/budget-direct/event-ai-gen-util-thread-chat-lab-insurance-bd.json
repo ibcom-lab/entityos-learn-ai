@@ -1,0 +1,18 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-thread-chat",
+	"notes": [
+		"chat using thread - with pre-linked assistant - with pre-linked vector-store."
+	],
+	"assistant": {
+		"id": "asst_By7IQXuNhhYBZ4CdzkOew95u"
+	},
+	"thread": {
+		"id": "thread_InQ2dkOjprNWZN8LTFT5KflQ"
+	},
+	"message": {
+		"role": "user",
+		"content": "am I covered for flood"
+	}
+}

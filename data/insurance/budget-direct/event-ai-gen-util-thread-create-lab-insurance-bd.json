@@ -1,0 +1,12 @@
+{
+	"settings": "lab",
+	"service": "openai",
+	"controller": "ai-gen-util-thread-create",
+	"notes": [
+		"create a thread for use with assistant - which may alread be linked to vector-store(s)."
+	],
+	"assistant":
+	{
+		"id": "asst_By7IQXuNhhYBZ4CdzkOew95u"
+	}
+}
