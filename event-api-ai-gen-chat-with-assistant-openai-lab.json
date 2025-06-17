@@ -1,0 +1,25 @@
+{
+	"body": {
+		"method": "ai-gen-chat-with-assistant",
+		"data": {
+			"_context": "lab",
+			"service": "openai",
+			"thread":
+			{
+				"id": "thread_4YulPL3ndzqRNXL4aFgbMYwv"
+			},
+			"assistant":
+			{
+				"id": "asst_L86cr1HWWNOYLdk5T7ymp5TG"
+			},
+			"message":
+			{
+				"role": "user",
+				"content": "what encryption does ZOLL AED use"
+			}
+		},
+		"check": "false"
+	},
+	"queryStringParameters": {},
+	"headers": {}
+}

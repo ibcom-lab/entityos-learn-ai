@@ -1,6 +1,6 @@
 /*
-	SELFDRIVEN AI API;
-	https://slfdrvn.io/apps#apis
+	ENTITYOS AI API;
+	https://learn.entityos.cloud
 
 	AI Util Functions
 	See Spec Doc @
@@ -66,7 +66,8 @@
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-aws-lab.json
 
 	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-openai-all-lab.json
-	
+	lambda-local -l index-api.js -t 9000 -e event-api-ai-gen-chat-with-assistant-openai-lab.json
+
 	Upload to AWS Lambda:
 	zip -r ../entityos-ai-DDMMMYYYY.zip *
 */
@@ -231,7 +232,13 @@ exports.handler = function (event, context, callback)
 						}
 						else
 						{
-							if (_.includes(['ai-gen-get-models', 'ai-gen-chat'], request.body.method))
+							if (_.includes(
+								[
+									'ai-gen-get-models',
+									'ai-gen-chat',
+									'ai-gen-chat-with-assistant'
+								],
+								request.body.method))
 							{
 								entityos.invoke('app-start');
 							}
@@ -243,7 +250,13 @@ exports.handler = function (event, context, callback)
 					}
 					else
 					{
-						if (_.includes(['ai-gen-get-models', 'ai-gen-chat'], request.body.method))
+						if (_.includes(
+							[
+								'ai-gen-get-models',
+								'ai-gen-chat',
+								'ai-gen-chat-with-assistant'
+							],
+							request.body.method))
 						{
 							entityos.invoke('app-start');
 						}
@@ -641,7 +654,8 @@ exports.handler = function (event, context, callback)
 					[
 						'ai-gen-get-models',
 						'ai-gen-chat',
-						'ai-gen-conversation-chat'
+						'ai-gen-conversation-chat',
+						'ai-gen-chat-with-assistant'
 					],
 						method))
 					{
@@ -786,6 +800,8 @@ exports.handler = function (event, context, callback)
 				}
 			});
 
+			// CHAT
+
 			entityos.add(
 			{
 				name: 'app-process-ai-gen-chat',
@@ -880,6 +896,120 @@ exports.handler = function (event, context, callback)
 					entityos.invoke('util-end',
 					{
 						method: 'ai-gen-chat',
+						status: 'OK',
+						data: responseData
+					},
+					'200');
+				}
+			});
+
+
+			// CHAT WITH GENAI ASSISTANT
+			// Check the user has access to the assistantID
+			//	- eg if can search for it using core_protect_key
+
+			// Code is private=N at the moment.
+			// Private=Y requires conversation/participation check
+			// And also currently all under the same openAI account - so public data only - no sensitive data.
+
+			// CREATE THE THREAD IF threadid NOT IN THE data
+			// thread is raw - context added when thread used in cat
+
+			entityos.add(
+			{
+				name: 'app-process-ai-gen-chat-with-assistant',
+				code: function ()
+				{
+					var data = entityos.get({scope: '_data'});
+				
+					if (_.get(data, 'assistant.id') == undefined)
+					{
+						entityos.invoke('util-end', 
+						{
+							error: 'Missing data.'
+						},
+						'403');
+					}
+					else
+					{
+						if (_.get(data, 'thread.id') != undefined)
+						{
+							//use existing thread
+							entityos.invoke('app-process-ai-gen-chat-with-assistant-process')
+						}
+						else
+						{
+							let aiSettings = entityos.invoke('ai-gen-util-get-settings');
+
+							if (aiSettings == undefined)
+							{
+								entityos.invoke('util-end', 
+								{
+									error: 'Not a valid model name. Use ai-gen-get-models method for find valid models.'
+								},
+								'403');
+							}
+							else
+							{
+								var param = 
+								{
+									model: data.model,
+									settings: aiSettings,
+									onComplete: 'app-process-ai-gen-chat-with-assistant-process'
+								}
+
+								let controller = 'ai-gen-util-thread-create';
+
+								if (_.has(aiSettings, 'service.threadController'))
+								{
+									controller = aiSettings.service.threadController;
+								}
+
+								entityos.invoke(controller, param);
+							}
+						}
+					}
+				}
+			});
+
+			entityos.add(
+			{
+				name: 'app-process-ai-gen-chat-with-assistant-process',
+				code: function (param)
+				{
+					var data = entityos.get({scope: '_data'});
+					
+					const threadID = _.get(param, 'thread.id');
+					if (threadID != undefined)
+					{
+						_.set(data, 'thread.id', threadID)
+					}
+
+					//console.log(threadID)	
+
+					var param = 
+					{
+						onComplete: 'app-process-ai-gen-chat-with-assistant-process-response'
+					}
+
+					entityos.invoke('ai-gen-util-thread-chat', param)
+				}
+			});
+
+			entityos.add(
+			{
+				name: 'app-process-ai-gen-chat-with-assistant-process-response',
+				code: function (param, response)
+				{
+					//console.log(param)
+					var responseData =
+					{
+						"assistant": {"response": _.get(param, 'assistant.response')}
+					}
+
+					entityos.invoke('util-end',
+					{
+						method: 'ai-gen-chat-with-assistant',
 						status: 'OK',
 						data: responseData
 					},
