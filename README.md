@@ -1,6 +1,6 @@
 ## Learn how to use entityOS & AI Services
 
-**In this learn example @ [entityos-learn-ai](https://github.com/ibcom-lab/entityos-learn-ai):**
+**In the learn example @ [entityos-learn-ai](https://github.com/ibcom-lab/entityos-learn-ai):**
 - A GenAI agent (as a permissioned entityOS user) is a member of conversation
 - The User is alos a member of the conversation
 - The code (as the GenAI agent) searches for conversation (set by UUID/GUID in the event.json) for posts that have a subject containing @genai. 
