@@ -1,14 +1,16 @@
 ## Learn how to use entityOS & AI Services
 
-In this example, a GenAI agent (as a permissioned entityOS user) searches for conversation (set by UUID/GUID in the event.json) that it is a participant in, for posts that have a subject containing @genai or @heyocto.  It then passes the message to the GenAI service (in this example OpenAI) and then saves the response as a comment to the original post.
-
-Example uses OpenAI, but you can change to any service you wish.
-
-You can also change to a Python app - using [github.com/ibcom-lab/entityos-learn-python](https://github.com/ibcom-lab/entityos-learn-python) as your starting point.
+**In this example:**
+- A GenAI agent (as a permissioned entityOS user) is a member of conversation
+- The User is alos a member of the conversation
+- The code (as the GenAI agent) searches for conversation (set by UUID/GUID in the event.json) for posts that have a subject containing @genai. 
+- It then passes the message to the GenAI service (in this example OpenAI)
+- It then saves the response as a comment to the original post.
 
 ### Resources
-- [Repo](https://github.com/ibcom-lab/entityos-learn-ai)
+- [entityos-learn-ai](https://github.com/ibcom-lab/entityos-learn-ai)
 - [entityos-learn-mcp](https://github.com/ibcom-lab/entityos-learn-mcp)
+- [entityos-learn-python](https://github.com/ibcom-lab/entityos-learn-python)
 - [learn.entityos.cloud](https://learn.entityos.cloud)
 
 ### Use Examples
